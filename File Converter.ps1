@@ -1,8 +1,17 @@
+Add-Type -Name Window -Namespace Console -MemberDefinition '
+[DllImport("Kernel32.dll")]
+public static extern IntPtr GetConsoleWindow();
+
+[DllImport("user32.dll")]
+public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
+
+[Console.Window]::ShowWindow([Console.Window]::GetConsoleWindow(), 0)
+
 #-------------------------------------------------------------#
 #----Initial Declarations-------------------------------------#
 #-------------------------------------------------------------#
-Set-ExecutionPolicy -ExecutionPolicy bypass process
-Add-Type -AssemblyName PresentationCore, PresentationFramework, System.Windows.Forms
+
+Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 $Xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="1530" Height="778" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0">
@@ -64,6 +73,8 @@ $Xaml = @"
 
 
 #region Logic
+Add-Type -AssemblyName System.Windows.Forms
+Set-ExecutionPolicy -ExecutionPolicy bypass process
 function Convert-EmployeeList {
     param(
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)][array]$InputObject
@@ -103,7 +114,7 @@ function Import-EmployeeList {
     $FileBrowser.InitialDirectory = $env:HOMEPATH + "\Downloads"
     $FileBrowser.Filter = "XLSX Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*"
     $FileBrowser.ShowDialog()
-    $State.EmployeeDataGrid = Import-excel $FileBrowser.Filename | Convert-EmployeeList
+    $State.EmployeeDataGrid = Import-Excel $FileBrowser.Filename | Convert-EmployeeList
 }
 
 function Export-EmployeeList {
