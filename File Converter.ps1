@@ -151,20 +151,20 @@ class SCCMReport {
 }
 
 function Out-SCCM {
-    [CmdletBinding()]
-    param(
-        [parameter(ValueFromPipeline)][array]$InputObject,
-        [string]$DownloadPath
-    )
-    begin {
-        $Output = @()
-    }
-    process {
-        $Output += [SCCMReport]::SCCMOutput($InputObject)
-    }
-    end {
-        $Output | export-excel -Path $DownloadPath -WorksheetName "SCCMReport" -AutoFilter:$False  -FreezeTopRow -Calculate:$False -NoNumberConversion "Serial_Number"
-    }
+  [CmdletBinding()]
+  param(
+      [parameter(ValueFromPipeline)][array]$InputObject,
+      [string]$DownloadPath
+  )
+  begin {
+      $Output = [System.Collections.Generic.List[SCCMReport]]::new()
+  }
+  process {
+      $Output.Add([SCCMReport]::SCCMOutput($InputObject))
+  }
+  end {
+      $Output | export-excel -Path $DownloadPath -WorksheetName "SCCMReport" -AutoFilter:$False  -FreezeTopRow -Calculate:$False -NoNumberConversion "Serial_Number"
+  }
 }
 
 function Import-SCCM {
